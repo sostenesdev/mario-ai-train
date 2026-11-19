@@ -1,0 +1,56 @@
+﻿# Ambientes virtuais e configuracao local
+venv/
+.venv/
+env/
+ENV/
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# Bytecode e caches do Python
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+
+# Testes, cobertura e analise estatica
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.tox/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Distribuicao e empacotamento
+build/
+dist/
+.eggs/
+*.egg-info/
+*.egg
+
+# Modelos e resultados do treinamento
+mario_ppo*.zip
+*.pt
+*.pth
+*.onnx
+checkpoints/
+models/
+logs/
+runs/
+tensorboard/
+videos/
+events.out.tfevents.*
+
+# Arquivos locais de editores e do sistema
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.log
+*.tmp
