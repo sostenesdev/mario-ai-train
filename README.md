@@ -29,9 +29,18 @@ Você pode acompanhar as tentativas na janela do jogo, continuar um treinamento 
 
 ## Instalação
 
-O ambiente utilizado no desenvolvimento é **Windows com Python 3.11**. Os comandos abaixo usam PowerShell e devem ser executados na pasta do projeto.
+O ambiente utilizado no desenvolvimento é **Windows com Python 3.11**. Tenha o **Git** e o **Python** instalados e abra o PowerShell na pasta onde deseja baixar o projeto.
 
-### 1. Crie e ative o ambiente virtual
+### 1. Clone o repositório
+
+```powershell
+git clone https://github.com/sostenesdev/mario-ai-train.git
+cd mario-ai-train
+```
+
+A partir daqui, execute os comandos dentro da pasta `mario-ai-train`.
+
+### 2. Crie e ative o ambiente virtual
 
 ```powershell
 python -m venv venv
@@ -40,7 +49,7 @@ python -m venv venv
 
 Se você já tem o ambiente `venv`, basta ativá-lo.
 
-### 2. Instale as dependências
+### 3. Instale as dependências
 
 ```powershell
 python -m pip install -r requirements.txt
