@@ -1,0 +1,94 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="440" viewBox="0 0 1200 440" role="img" aria-labelledby="title description">
+  <title id="title">Mario AI Trainning</title>
+  <desc id="description">Capa com visual de jogo de plataforma, personagem em pixel art e uma janela de treinamento de inteligência artificial.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101c35"/>
+      <stop offset="1" stop-color="#08101f"/>
+    </linearGradient>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#193859"/>
+      <stop offset="1" stop-color="#10213d"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#a8cced" stroke-opacity=".055"/>
+    </pattern>
+    <pattern id="bricks" width="40" height="28" patternUnits="userSpaceOnUse">
+      <rect width="40" height="28" fill="#b25b39"/>
+      <path d="M0 0H40M0 28H40M20 0V14M0 14H40M0 14V28M40 14V28" fill="none" stroke="#6b392d" stroke-width="3"/>
+      <path d="M3 3H17M23 3H37" stroke="#df9560" stroke-width="2"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="440" rx="24" fill="url(#background)"/>
+  <rect width="1200" height="440" rx="24" fill="url(#grid)"/>
+  <path d="M44 38H1156" stroke="#6d88ac" stroke-opacity=".22"/>
+  <rect x="44" y="22" width="10" height="10" fill="#f47764"/>
+  <rect x="62" y="22" width="10" height="10" fill="#f2c75c"/>
+  <rect x="80" y="22" width="10" height="10" fill="#67d8b5"/>
+  <text x="1156" y="30" fill="#849bbd" font-family="Consolas, monospace" font-size="12" text-anchor="end" letter-spacing="2">REINFORCEMENT LEARNING LAB</text>
+
+  <rect x="52" y="76" width="4" height="18" fill="#f2c75c"/>
+  <text x="70" y="90" fill="#67d8b5" font-family="Consolas, monospace" font-size="13" letter-spacing="3">CADA TENTATIVA ENSINA.</text>
+  <text x="48" y="181" fill="#f4f6fb" font-family="Arial, Helvetica, sans-serif" font-size="84" font-weight="900" letter-spacing="-3">MARIO <tspan fill="#f2c75c">AI</tspan></text>
+  <text x="52" y="251" fill="#67d8b5" font-family="Arial, Helvetica, sans-serif" font-size="67" font-weight="900" letter-spacing="-2">TRAINNING</text>
+  <text x="55" y="291" fill="#bac9de" font-family="Arial, Helvetica, sans-serif" font-size="18">Observar. Explorar. Aprender a jogar.</text>
+
+  <g font-family="Consolas, monospace" font-size="12" font-weight="bold" text-anchor="middle">
+    <rect x="54" y="320" width="90" height="30" rx="6" fill="#223554"/>
+    <text x="99" y="340" fill="#f2c75c">PYTHON</text>
+    <rect x="154" y="320" width="70" height="30" rx="6" fill="#223554"/>
+    <text x="189" y="340" fill="#f47764">PPO</text>
+    <rect x="234" y="320" width="100" height="30" rx="6" fill="#223554"/>
+    <text x="284" y="340" fill="#b8cafe">PYTORCH</text>
+    <rect x="344" y="320" width="124" height="30" rx="6" fill="#223554"/>
+    <text x="406" y="340" fill="#67d8b5">GYMNASIUM</text>
+  </g>
+  <text x="55" y="402" fill="#7288a8" font-family="Consolas, monospace" font-size="12" letter-spacing="1">84 × 84 PIXELS  /  4 FRAMES  /  NOVAS TENTATIVAS</text>
+
+  <rect x="680" y="73" width="468" height="302" rx="14" fill="#060d19" stroke="#304661" stroke-width="2"/>
+  <path d="M694 74H1134Q1147 74 1147 87V113H681V87Q681 74 694 74" fill="#1a2a42"/>
+  <circle cx="703" cy="94" r="4" fill="#67d8b5"/>
+  <text x="717" y="98" fill="#dce5f3" font-family="Consolas, monospace" font-size="12">TRAINING ENVIRONMENT</text>
+  <text x="1128" y="98" fill="#849bbd" font-family="Consolas, monospace" font-size="11" text-anchor="end">PPO / CNN</text>
+  <rect x="692" y="124" width="444" height="238" rx="4" fill="url(#sky)"/>
+
+  <g fill="#537293" opacity=".35">
+    <path d="M706 282L756 232L806 282Z"/>
+    <path d="M960 282L1020 222L1080 282Z"/>
+  </g>
+  <g fill="#b8d9e6" opacity=".65">
+    <rect x="723" y="169" width="48" height="12"/>
+    <rect x="735" y="157" width="24" height="12"/>
+    <rect x="1050" y="185" width="60" height="12"/>
+    <rect x="1062" y="173" width="36" height="12"/>
+  </g>
+  <g shape-rendering="crispEdges">
+    <rect x="930" y="194" width="32" height="32" fill="#e6ad4f" stroke="#8b5f32" stroke-width="3"/>
+    <text x="946" y="217" fill="#fff2bd" font-family="Consolas, monospace" font-size="24" font-weight="bold" text-anchor="middle">?</text>
+    <rect x="970" y="194" width="32" height="32" fill="#b25b39" stroke="#6b392d" stroke-width="3"/>
+    <path d="M971 210H1001M985 195V210M979 210V226" stroke="#6b392d" stroke-width="2"/>
+    <rect x="1020" y="273" width="54" height="49" fill="#2d9c7d"/>
+    <rect x="1014" y="260" width="66" height="20" fill="#5bd6a1" stroke="#1f715e" stroke-width="3"/>
+    <rect x="1026" y="282" width="8" height="40" fill="#67d8b5"/>
+    <rect x="1060" y="282" width="8" height="40" fill="#1f715e"/>
+    <rect x="692" y="322" width="444" height="40" fill="url(#bricks)"/>
+    <path d="M692 322H1136" stroke="#e2a261" stroke-width="4"/>
+  </g>
+
+  <g transform="translate(810 250) scale(4)" shape-rendering="crispEdges">
+    <path d="M3 0H9V1H11V3H1V1H3Z" fill="#f47764"/>
+    <path d="M3 3H9V4H11V7H9V8H4V7H2V4H3Z" fill="#f6c88a"/>
+    <path d="M2 3H5V5H3V6H2ZM8 3H9V5H8ZM9 6H12V7H8V6Z" fill="#48372c"/>
+    <path d="M2 8H9V9H11V12H9V11H2V12H0V10H2Z" fill="#f47764"/>
+    <path d="M4 8H5V11H7V8H8V12H9V15H6V13H4V15H1V12H4Z" fill="#4c8edb"/>
+    <path d="M0 11H2V13H0ZM10 11H12V13H10Z" fill="#f6c88a"/>
+    <path d="M1 15H4V17H0V16H1ZM7 15H10V16H11V17H7Z" fill="#48372c"/>
+    <rect x="4" y="11" width="1" height="1" fill="#f2c75c"/>
+    <rect x="7" y="11" width="1" height="1" fill="#f2c75c"/>
+  </g>
+  <path d="M747 298H783M759 288H789M770 278H790" stroke="#67d8b5" stroke-width="3" stroke-linecap="round" opacity=".6"/>
+  <path d="M872 290C897 278 901 242 918 239" fill="none" stroke="#f2c75c" stroke-width="2" stroke-dasharray="5 6" opacity=".8"/>
+  <path d="M909 235L920 238L914 247" fill="none" stroke="#f2c75c" stroke-width="2"/>
+  <text x="914" y="402" fill="#849bbd" font-family="Consolas, monospace" font-size="12" text-anchor="middle" letter-spacing="2">UM EPISÓDIO DE CADA VEZ.</text>
+</svg>
