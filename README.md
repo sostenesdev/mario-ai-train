@@ -189,3 +189,19 @@ O emulador ainda usa o Gym internamente. O projeto adapta essa API ao Gymnasium 
 **Mudei o código, mas um treino aberto continua com o comportamento anterior.**
 
 Interrompa com **Ctrl+C** e execute o comando novamente para carregar a alteração.
+
+## Créditos e referência
+
+Baseado no projeto [Super Mario Bros for OpenAI Gym](https://github.com/Kautenja/gym-super-mario-bros), de **Christian Kauten (2018)**, que fornece o ambiente do jogo utilizado no treinamento.
+
+### Citação BibTeX
+
+```bibtex
+@misc{gym-super-mario-bros,
+  author = {Christian Kauten},
+  howpublished = {GitHub},
+  title = {{S}uper {M}ario {B}ros for {O}pen{AI} {G}ym},
+  URL = {https://github.com/Kautenja/gym-super-mario-bros},
+  year = {2018},
+}
+```
