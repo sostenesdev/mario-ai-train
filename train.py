@@ -4,8 +4,10 @@ import os
 import cv2
 import torch
 from stable_baselines3 import PPO
+from stable_baselines3.common.callbacks import ConvertCallback
 
-from main import MODEL_PATH, make_vec_env, positive_int
+from main import BEST_MODEL_PATH, MODEL_PATH, make_vec_env, positive_int, render_game
+from training_callbacks import BestModelCallback
 
 
 # Incentiva a exploracao e limita mudancas bruscas da politica.
@@ -18,11 +20,13 @@ PPO_SETTINGS = {
 }
 
 
-def train(steps, save_every=10000, render=False):
+def train(steps, save_every=10000, render=False, eval_every=25000):
     # Muitas threads tornam as pequenas operacoes da CNN mais lentas na CPU.
     torch.set_num_threads(min(4, os.cpu_count() or 1))
     env = make_vec_env()
+    eval_env = None
     try:
+        eval_env = make_vec_env(max_episode_steps=3000)
         if MODEL_PATH.is_file():
             print(f"Continuando o treinamento de {MODEL_PATH}", flush=True)
             model = PPO.load(
@@ -44,19 +48,25 @@ def train(steps, save_every=10000, render=False):
         def save_progress(local_vars, global_vars):
             nonlocal last_save
             if render:
-                env.render(mode="human")
+                render_game(env)
             if model.num_timesteps - last_save >= save_every:
                 model.save(MODEL_PATH)
                 last_save = model.num_timesteps
                 print(f"Progresso salvo: {last_save} passos.", flush=True)
             return True
 
+        best_model_callback = BestModelCallback(
+            eval_env,
+            BEST_MODEL_PATH,
+            eval_every=eval_every,
+            process_events=cv2.pollKey if render else None,
+        )
         display = "com a janela do jogo" if render else "sem abrir a janela do jogo"
         print(f"Treinando por mais {steps} passos, {display}.", flush=True)
         try:
             model.learn(
                 total_timesteps=steps,
-                callback=save_progress,
+                callback=[ConvertCallback(save_progress), best_model_callback],
                 reset_num_timesteps=False,
             )
         except KeyboardInterrupt:
@@ -69,6 +79,8 @@ def train(steps, save_every=10000, render=False):
         )
     finally:
         env.close()
+        if eval_env is not None:
+            eval_env.close()
         if render:
             cv2.destroyAllWindows()
 
@@ -92,8 +104,19 @@ def main():
     parser.add_argument(
         "--render", action="store_true", help="Mostra o jogo durante o aprendizado."
     )
+    parser.add_argument(
+        "--eval-every",
+        type=positive_int,
+        default=25000,
+        help="Intervalo para avaliar e guardar a melhor versao (padrao: 25000).",
+    )
     args = parser.parse_args()
-    train(args.steps, save_every=args.save_every, render=args.render)
+    train(
+        args.steps,
+        save_every=args.save_every,
+        render=args.render,
+        eval_every=args.eval_every,
+    )
 
 
 if __name__ == "__main__":

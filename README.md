@@ -23,6 +23,7 @@ Você pode acompanhar as tentativas na janela do jogo, continuar um treinamento 
 - **Treinamento com PPO:** uma rede convolucional (`CnnPolicy`) processa as imagens do jogo.
 - **Acompanhamento visual:** opção de mostrar o Mario enquanto ele aprende.
 - **Progresso salvo:** salvamento periódico, ao concluir e ao interromper com **Ctrl+C**.
+- **Melhor versão preservada:** avaliações periódicas guardam o modelo com maior recompensa média.
 - **Continuação automática:** o treinamento retoma o `mario_ppo.zip` existente.
 - **Reinício por inatividade:** o episódio termina após 3 segundos de jogo sem deslocamento horizontal.
 - **Diagnóstico sem janela:** execução com semente e registro de ações e posição no console.
@@ -78,6 +79,7 @@ O treinamento usa a **CPU**. Se houver um `mario_ppo.zip` na pasta do projeto, o
 | `--steps` | Quantos passos adicionais de treinamento executar. | `100000` |
 | `--save-every` | Intervalo entre salvamentos, em passos. | `10000` |
 | `--render` | Mostra a janela do jogo durante o aprendizado. | Desativado |
+| `--eval-every` | Intervalo para avaliar e salvar a melhor versão, em passos. | `25000` |
 
 Para salvar com mais frequência:
 
@@ -89,6 +91,20 @@ python train.py --steps 100000 --save-every 5000 --render
 
 > Um treino curto valida o funcionamento do sistema. Aprender a jogar exige muitas tentativas: 100.000 passos não garantem concluir uma fase.
 
+### Último modelo e melhor modelo
+
+O treinamento continua salvando o progresso mais recente em `mario_ppo.zip`. Além disso, avalia o agente antes de começar, a cada 25.000 passos adicionais e ao terminar. Cada avaliação usa cinco episódios em um ambiente separado, com sementes fixas e ações amostradas, como na reprodução padrão.
+
+A versão com maior recompensa média fica em `checkpoints/best_model.zip`. Ao retomar o treinamento, a melhor versão já salva é avaliada novamente antes de qualquer substituição. A avaliação preserva a sequência aleatória do treinamento.
+
+As avaliações consomem tempo e podem pausar o avanço da janela; o console informa quando estão acontecendo. Cada episódio de avaliação tem um limite de 3.000 passos, além da regra de inatividade. Esse limite adicional não altera os episódios de treinamento.
+
+Para mudar a frequência das avaliações:
+
+```powershell
+python train.py --steps 100000 --render --eval-every 50000
+```
+
 ## Reprodução
 
 Depois de gerar o modelo, execute:
@@ -97,7 +113,7 @@ Depois de gerar o modelo, execute:
 python main.py
 ```
 
-A reprodução **não treina nem altera o modelo**. Por padrão, as ações são amostradas das probabilidades aprendidas pelo PPO, permitindo observar as diferentes tentativas do agente.
+A reprodução usa `checkpoints/best_model.zip` quando ele existe; caso contrário, usa `mario_ppo.zip`. O caminho escolhido aparece no console. A reprodução **não treina nem altera o modelo**. Por padrão, as ações são amostradas das probabilidades aprendidas pelo PPO, permitindo observar as diferentes tentativas do agente.
 
 | Opção | Para que serve | Padrão |
 | --- | --- | --- |
@@ -105,6 +121,13 @@ A reprodução **não treina nem altera o modelo**. Por padrão, as ações são
 | `--deterministic` | Escolhe sempre a ação mais provável. | Desativado |
 | `--headless` | Executa sem abrir a janela do jogo. | Desativado |
 | `--seed` | Define uma semente para repetir um teste. | Não definida |
+| `--latest` | Usa o progresso mais recente em vez da melhor versão avaliada. | Desativado |
+
+Para comparar com o progresso mais recente:
+
+```powershell
+python main.py --latest
+```
 
 Para avaliar a escolha mais provável de um modelo:
 
@@ -134,7 +157,7 @@ flowchart LR
     R --> P
 ```
 
-O treinamento e a reprodução usam o mesmo processamento das observações. A janela continua exibindo o jogo na resolução original.
+O treinamento e a reprodução usam o mesmo processamento das observações. A janela exibe o jogo em **512 × 480 pixels**, com o dobro da largura e da altura originais e ampliação que preserva o visual pixelado.
 
 ### Regra dos 3 segundos
 
@@ -153,10 +176,12 @@ Quando a posição horizontal do Mario permanece igual por **180 frames a 60 FPS
 │   └── assets/
 │       └── readme-cover.svg        # Capa do projeto
 ├── tests/
+│   ├── test_best_model.py          # Proteção contra regressão do modelo
 │   └── test_inactivity_timeout.py  # Testes do limite de inatividade
 ├── .gitignore                     # Arquivos locais e resultados ignorados
 ├── main.py                        # Ambiente e reprodução do modelo
 ├── train.py                       # Treinamento e salvamento com PPO
+├── training_callbacks.py          # Avaliação e preservação do melhor modelo
 ├── wrappers.py                    # Compatibilidade e limite de inatividade
 ├── requirements.txt               # Dependências
 └── README.md
@@ -181,6 +206,12 @@ Execute primeiro `python train.py --steps 100000`. A instalação das dependênc
 **O Mario fica parado ou repete o mesmo comando.**
 
 Um modelo pouco treinado pode repetir ações, especialmente com `--deterministic`. Continue o aprendizado com `python train.py --steps 100000 --render`. A regra de inatividade reinicia episódios sem movimento horizontal.
+
+**O Mario passou a jogar pior depois de continuar treinando.**
+
+O desempenho pode oscilar durante o aprendizado. `python main.py` usa a melhor versão avaliada, e `python main.py --latest` permite compará-la com o progresso mais recente. A proteção passa a valer a partir das avaliações realizadas por esta versão do código; modelos antigos já substituídos não são recuperados.
+
+A janela ampliada usa apenas a imagem de exibição. As observações fornecidas ao agente continuam em 84 × 84 pixels com quatro frames; a ampliação foi comparada com a exibição original e com a execução sem janela.
 
 **Aparece um aviso de que o Gym foi descontinuado.**
 

@@ -8,7 +8,7 @@ import cv2
 import torch
 from gym_super_mario_bros import SuperMarioBrosEnv
 from gym_super_mario_bros.actions import SIMPLE_MOVEMENT
-from gymnasium.wrappers import GrayScaleObservation, ResizeObservation
+from gymnasium.wrappers import GrayScaleObservation, ResizeObservation, TimeLimit
 from nes_py.wrappers import JoypadSpace
 from stable_baselines3 import PPO
 from stable_baselines3.common.monitor import Monitor
@@ -18,6 +18,7 @@ from wrappers import HorizontalInactivityTimeout, MarioGymnasiumEnv
 
 
 MODEL_PATH = Path(__file__).with_name("mario_ppo.zip")
+BEST_MODEL_PATH = MODEL_PATH.parent / "checkpoints" / "best_model.zip"
 
 
 def positive_int(value):
@@ -38,15 +39,35 @@ def make_env():
     return env
 
 
-def make_vec_env():
+def make_vec_env(max_episode_steps=None):
     # Treinamento e execucao precisam do mesmo tratamento das observacoes.
-    return VecFrameStack(DummyVecEnv([lambda: Monitor(make_env())]), n_stack=4)
+    def create_env():
+        env = make_env()
+        if max_episode_steps is not None:
+            env = TimeLimit(env, max_episode_steps=max_episode_steps)
+        return Monitor(env)
+
+    return VecFrameStack(DummyVecEnv([create_env]), n_stack=4)
 
 
-def play(steps=5000, deterministic=False, render=True, seed=None):
-    if not MODEL_PATH.is_file():
+def render_game(env):
+    frame = env.render(mode="rgb_array")
+    frame = cv2.resize(frame, None, fx=2, fy=2, interpolation=cv2.INTER_NEAREST)
+    cv2.imshow("Mario AI Trainning", cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
+    cv2.waitKey(1)
+
+
+def select_model_path(latest=False):
+    if not latest and BEST_MODEL_PATH.is_file():
+        return BEST_MODEL_PATH
+    return MODEL_PATH
+
+
+def play(steps=5000, deterministic=False, render=True, seed=None, latest=False):
+    model_path = select_model_path(latest=latest)
+    if not model_path.is_file():
         raise SystemExit(
-            f"Modelo treinado nao encontrado: {MODEL_PATH}. "
+            f"Modelo treinado nao encontrado: {model_path}. "
             "Execute primeiro: python train.py --steps 100000"
         )
 
@@ -55,7 +76,8 @@ def play(steps=5000, deterministic=False, render=True, seed=None):
     actions = Counter()
     max_x = 0
     try:
-        model = PPO.load(MODEL_PATH, env=env, device="cpu")
+        model = PPO.load(model_path, env=env, device="cpu")
+        print(f"Reproduzindo: {model_path}", flush=True)
         if seed is not None:
             torch.manual_seed(seed)
             env.seed(seed)
@@ -75,7 +97,7 @@ def play(steps=5000, deterministic=False, render=True, seed=None):
             obs, rewards, dones, infos = env.step(action)
             max_x = max(max_x, infos[0]["x_pos"])
             if render:
-                env.render(mode="human")
+                render_game(env)
                 time.sleep(0.01)
 
             if infos[0].get("episode_end_reason") == "horizontal_inactivity":
@@ -111,12 +133,17 @@ def main(argv=None):
     )
     parser.add_argument("--headless", action="store_true", help="Executa sem abrir a janela.")
     parser.add_argument("--seed", type=int, help="Semente para reproduzir um teste.")
+    parser.add_argument(
+        "--latest", action="store_true",
+        help="Reproduz o ultimo modelo salvo para comparar com a melhor versao.",
+    )
     args = parser.parse_args(argv)
     return play(
         steps=args.steps,
         deterministic=args.deterministic,
         render=not args.headless,
         seed=args.seed,
+        latest=args.latest,
     )
 
 
